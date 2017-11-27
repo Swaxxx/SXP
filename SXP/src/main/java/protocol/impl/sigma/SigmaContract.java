@@ -51,7 +51,7 @@ public class SigmaContract extends EstablisherContract<BigInteger, ElGamalKey, S
 		contract.setClauses(new ArrayList<String>());
 		contract.setParties(new ArrayList<String>());
 		contract.setSignatures(new HashMap<String,String>());
-		contract.setEstablisherType(EstablisherType.Sigma);
+		contract.setEstablisherType(EstablisherType.Ethereum);
 	}
 	
 	// Constructor from clauses (problem when resolve, because no partiesId set)

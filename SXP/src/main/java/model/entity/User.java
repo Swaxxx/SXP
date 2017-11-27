@@ -20,6 +20,8 @@ import crypt.annotations.CryptHashAnnotation;
 import crypt.annotations.CryptSigneAnnotation;
 import crypt.annotations.CryptCryptAnnotation;
 
+import model.entity.EthereumKey;
+
 @XmlRootElement
 @Entity
 @Table(name="\"User\"")
@@ -58,6 +60,9 @@ public class User {
 	@XmlElement(name="signature")
 //	@NotNull
 	private ElGamalSignEntity signature;
+
+	@XmlElement(name="ethereumKey")
+	private EthereumKey ethereumKey;
 	
 	public void setId(String id) {
 		this.id = id;
@@ -113,5 +118,13 @@ public class User {
 
 	public void setSignature(ElGamalSignEntity signature) {
 		this.signature = signature;
+	}
+
+	public EthereumKey getEthereumKey() {
+		return ethereumKey;
+	}
+
+	public void setEthereumKey(EthereumKey ethereumKey) {
+		this.ethereumKey = ethereumKey;
 	}
 }
