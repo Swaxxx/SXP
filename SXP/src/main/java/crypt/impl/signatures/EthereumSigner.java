@@ -2,28 +2,20 @@ package crypt.impl.signatures;
 
 import crypt.base.AbstractSigner;
 import model.entity.EthereumKey;
-import org.ethereum.util.ByteUtil;
 import protocol.impl.blockChain.*;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.abi.datatypes.Address;
 
 public class EthereumSigner extends AbstractSigner<EthereumSignature, EthereumKey> {
 
     private EthereumContract contract;
-    private EthereumKey key;
     private BlockChainContract bcContract;
 
     public EthereumSigner(EthereumContract contract, EthereumKey key) {
         this.contract = contract;
-        this.key = key;
     }
 
     public void setBcContract(BlockChainContract bcContract) {
         this.bcContract = bcContract;
-    }
-
-    public void setSync(SyncBlockChain sync) {
-        this.sync = sync;
     }
 
     public BlockChainContract getBcContract() {
@@ -39,9 +31,15 @@ public class EthereumSigner extends AbstractSigner<EthereumSignature, EthereumKe
     public EthereumSignature sign(byte[] message) {
         TradeSigner signer = new TradeSigner(this.contract);
 
-        if (!signer.sign()) {
-            throw new NullPointerException("Failed to sign contract");
-        }
+        try {
+			if (!signer.sign()) {
+			    throw new NullPointerException("Failed to sign contract");
+			}
+		} catch (Exception e) {
+			// TODO Logging
+			e.printStackTrace();
+			return null;
+		}
 
         TransactionReceipt tx = signer.getTx();
 
@@ -58,7 +56,15 @@ public class EthereumSigner extends AbstractSigner<EthereumSignature, EthereumKe
             throw new NullPointerException("BlockChainContract not Set");
         }
 
-        TradeSignatureVerifier verfier = new TradeSignatureVerifier(this.contract);
+        TradeSignatureVerifier verifier = null;
+        
+		try {
+			verifier = new TradeSignatureVerifier(this.contract);
+		} catch (Exception e) {
+			// TODO Logging
+			e.printStackTrace();
+			return false;
+		}
 
         return verifier.verif(this.bcContract);
     }

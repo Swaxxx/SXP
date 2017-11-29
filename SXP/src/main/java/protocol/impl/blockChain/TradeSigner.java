@@ -11,9 +11,9 @@ public class TradeSigner {
 		this.contract = contract;
 	}
 
-	public boolean sign() {
-		boolean signed = this.contract.sign().send();
-        this.tx = contract.getTransactionReceipt().get();
+	public boolean sign() throws Exception {
+		boolean signed = this.contract.getContract().sign().send().getValue();
+        this.tx = contract.getContract().getTransactionReceipt().get();
         return signed;
 	}
 
