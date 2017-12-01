@@ -1,3 +1,16 @@
+# Integration of Ethereum blockchain system in SXP project
+
+## Purpose of this repository
+This is a R&D repository to study the integration of an Ethereum blockchain system in SXP project.
+
+See : [Wiki](https://github.com/Swaxxx/SXP/wiki/Home)
+
+## Context
+
+This work was realized in the context of the teaching unit Software Engineering, in Computer Science M1 at Aix-Marseille Université.
+
+***
+
 # Secure Exchange Protocols (SXP)
 
 Below is a description of the idea behind the SXP project. For technical details the reader should refer to the wiki on github.  
@@ -50,16 +63,3 @@ Nevertheless, there exist "optimistic" contract signing protocols, that call Tre
 ## Status
 
 SXP is now at a prototype stage. In particular, it has a rudimentary user interface. But main functionalities of account creation, announcement publication, announcement search, resilience of accounts and datas, confidentiality, are implemented, as well as a first version of optimistic contract signing.
-
-***
-
-# Integration of Ethereum blockchain system in SXP project
-
-## Purpose of this repository
-This is a R&D repository to study the integration of an Ethereum blockchain system in SXP project.
-
-See : [Wiki](https://github.com/Swaxxx/SXP/wiki/Home)
-
-## Context
-
-This work was realized in the context of the teaching unit Software Engineering, in Computer Science M1 at Aix-Marseille Université.

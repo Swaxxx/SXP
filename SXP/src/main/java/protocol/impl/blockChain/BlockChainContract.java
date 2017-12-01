@@ -3,26 +3,30 @@ package protocol.impl.blockChain;
 import com.fasterxml.jackson.core.type.TypeReference;
 import controller.Users;
 import controller.tools.JsonTools;
-import crypt.api.signatures.Signer;
 import crypt.impl.hashs.SHA256Hasher;
 import crypt.impl.signatures.EthereumSignature;
 import crypt.impl.signatures.EthereumSigner;
 import model.api.Status;
+import model.api.Wish;
 import model.api.EstablisherType;
 import model.entity.ContractEntity;
 import model.entity.EthereumKey;
 import model.entity.User;
-import org.ethereum.util.ByteUtil;
-import org.spongycastle.util.encoders.Hex;
+
+import org.bouncycastle.util.Arrays;
 import protocol.api.EstablisherContract;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
-public class EthereumContract extends EstablisherContract<BigInteger, EthereumKey, EthereumSignature, EthereumSigner>{
+public class BlockChainContract extends EstablisherContract<BigInteger, EthereumKey, EthereumSignature, EthereumSigner>{
     
+	private String id;
+    private Date date;
+	
     // List of parties keys
     protected ArrayList<EthereumKey> parties = new ArrayList<>();
     // Maps the keys with the id of a user
@@ -35,46 +39,57 @@ public class EthereumContract extends EstablisherContract<BigInteger, EthereumKe
     protected EthereumSigner signer;
    
     // Basic constructor
-    public EthereumContract(){
+    public BlockChainContract(){
         super();
-        this.signer = new EthereumSigner();
         this.contract = new ContractEntity();
+        date = contract.getCreatedAt();
         contract.setClauses(new ArrayList<String>());
         contract.setParties(new ArrayList<String>());
         contract.setSignatures(new HashMap<String,String>());
         contract.setEstablisherType(EstablisherType.Ethereum);
-    }
-    
-    // Constructor from clauses (problem when resolve, because no partiesId set)
-    public EthereumContract(ArrayList<String> clauses){
-        super();
-        this.signer = new EthereumSigner();
-        this.contract = new ContractEntity();
-        this.setClauses(clauses);
-        this.contract.setParties(new ArrayList<String>());
-        this.contract.setSignatures(new HashMap<String,String>());
-        this.contract.setEstablisherType(EstablisherType.Ethereum);
+        id = ByteUtil.bytesToHex(getHashableData());
+        contract.setTitle(id);
     }
     
     // Constructor from a ContractEntity (what will be most used)
-    public EthereumContract(ContractEntity c){
+    public BlockChainContract(ContractEntity c){
         super();
         this.contract = c;
-        this.signer = new EthereumSigner();
         this.setClauses(contract.getClauses());
         this.setParties(contract.getParties());
         this.contract.setEstablisherType(EstablisherType.Ethereum);
+        date = contract.getCreatedAt();
+        id = ByteUtil.bytesToHex(getHashableData());
+        contract.setTitle(id);
+    }
+    
+    public BlockChainContract(ContractEntity c, ArrayList<EthereumKey> parties){
+        super();
+        this.contract = c;
+        this.setClauses(contract.getClauses());
+        this.setParties(contract.getParties());
+        this.contract.setEstablisherType(EstablisherType.Ethereum);
+        date = contract.getCreatedAt();
+        id = ByteUtil.bytesToHex(getHashableData());
+        setPartiesAsKeys(parties);
+        contract.setTitle(id);
     }
 
     /************* GETTERS ***********/
     public ArrayList<String> getClauses(){
         return clauses;
     }
+    
     public ArrayList<EthereumKey> getParties(){
         return parties;
     }
-    public EthereumKey getTrentKey(){
-        return signer.getTrentK();
+    
+    public String getId() {
+    	return id;
+    }
+    
+    public HashMap<EthereumKey, EthereumSignature> getSignatures() {
+    	return signatures;
     }
     
     /************* SETTERS ***********/
@@ -92,8 +107,8 @@ public class EthereumContract extends EstablisherContract<BigInteger, EthereumKe
             JsonTools<User> json = new JsonTools<>(new TypeReference<User>(){});
             Users users = new Users();
             User user = json.toEntity(users.get(u));
-            this.parties.add(user.getKey());
-            this.partiesId.put(user.getKey(), user.getId());
+            this.parties.add(user.getEthereumKey());
+            this.partiesId.put(user.getEthereumKey(), user.getId());
         }
         this.contract.setParties(s);
         
@@ -105,13 +120,22 @@ public class EthereumContract extends EstablisherContract<BigInteger, EthereumKe
             }
         });
     }
-
-    /**
-     * Set Trent key and store it into Establishement data
-     */
-    public void setTrentKey (EthereumKey k){
-        signer.setTrentK(k);
+    
+    public void setPartiesAsKeys(ArrayList<EthereumKey> s) {
+    	parties.addAll(s) ;
+        int i=0 ;
+        for(EthereumKey tmp : s) {
+        	partiesId.put(tmp, contract.getParties().get(i)) ;
+            i++ ;
+        }
+        setClauses(contract.getClauses()) ;
+        id = getHashableData().toString() ;
     }
+    
+    public void setSigner(EthereumSigner ethereumSigner) {
+		this.signer = ethereumSigner;
+		
+	}
     
     /************* STATUS / WISH ***********/
     @Override
@@ -136,31 +160,23 @@ public class EthereumContract extends EstablisherContract<BigInteger, EthereumKe
     
     @Override
     public boolean isFinalized() {
-        boolean result = false;
-        
-        if (this.getTrentKey() == null){
-            return false;}
-        
-        
-        for(EthereumKey k: parties) {
-            signer.setReceiverK(k);
-            if(signatures.get(k) == null){
+    	if (signer == null) {
+            throw new NullPointerException("Signer not initialized yet");
+        }
+    	
+        for (EthereumKey key : parties) {
+            if (!signatures.containsKey(key)) {
                 return false;
             }
-            
-            byte[] data = (new String(this.getHashableData())).getBytes();
-            if (signer.verify(data, signatures.get(k)))
-                return true;
-            
-            for (int round = 1; round < parties.size() + 2; round++){
-                data = (new String(this.getHashableData()) + round).getBytes();
-                if (signer.verify(data, signatures.get(k))){
-                    result = true;
-                    break;
-                }
+        }
+        
+        for (EthereumSignature partSign : signatures.values()) {
+            if (!signer.verify(new byte[0], partSign)) {
+                return false;
             }
         }
-        return result;
+        
+        return true;
     }
 
     @Override
@@ -171,20 +187,31 @@ public class EthereumContract extends EstablisherContract<BigInteger, EthereumKe
         signatures.put(k, s);
         contract.getSignatures().put(this.partiesId.get(k), s.toString());
         
-        if (this.isFinalized())
-            this.setStatus(Status.FINALIZED);
+        if (this.isFinalized()) {
+        	this.setStatus(Status.FINALIZED);
+        }
     }
     
     @Override
     public boolean checkContrat(EstablisherContract<BigInteger, EthereumKey, EthereumSignature, EthereumSigner> contract) {
-        return this.equals(contract) && this.isFinalized();
+    	if (!this.equals(contract) && !this.isFinalized()) {
+    		return false;
+    	}
+    	
+        setStatus(Status.FINALIZED);
+        
+        /**
+         * TODO Logging of System.out.println("\n[CONTRACT FINALIZED]\n");
+         */
+        
+        return true;
     }
     
     @Override
     public boolean equals(EstablisherContract<BigInteger, EthereumKey, EthereumSignature, EthereumSigner> c) {
-        if (!(c instanceof EthereumContract))
+        if (!(c instanceof BlockChainContract))
             return false;
-        EthereumContract contract = (EthereumContract) c;
+        BlockChainContract contract = (BlockChainContract) c;
         if (contract.clauses == null)
             return false;
         return Arrays.areEqual(this.getHashableData(), contract.getHashableData());
@@ -192,27 +219,26 @@ public class EthereumContract extends EstablisherContract<BigInteger, EthereumKe
     
     @Override
     public byte[] getHashableData() {
-        BigInteger sum = BigInteger.ZERO;
-        for(EthereumKey k: parties) {
-            sum = sum.add(k.getPublicKey());
-        }
-
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(sum.toString());
-        byte[] signable = this.clauses.getHashableData();
-        
-        int signableL = signable.length;
-        int bufferL = buffer.toString().getBytes().length;
-        byte[] concate = new byte[signableL + bufferL];
-        System.arraycopy(new String(buffer).getBytes(), 0, concate, 0, bufferL);
-        System.arraycopy(signable, 0, concate, bufferL, signableL);
-        
-        return concate;
+    	String hashParties = parties.toString() ;
+        String hashClauses = clauses.toString() ;
+        String concat = hashParties + hashClauses + date.toString() ;
+        return new SHA256Hasher().getHash(concat.getBytes()) ;
     }
     
     @Override
     public EthereumSignature sign(EthereumSigner signer, EthereumKey k) {
-        signer.setKey(k);
-        return signer.sign(this.getHashableData());
+    	setStatus(Status.SIGNING);
+        EthereumSignature signature = signer.sign(new byte[0]);
+
+        /**
+         * TODO Logging of System.out.println("\n\n[Signature done] : " + k.toString() + "\n\n"); 
+         */
+
+        if (signature == null) {
+            throw new NullPointerException("Signature of " + k.getPublicKey() + " impossible");
+        }
+        addSignature(k, signature);
+        
+        return signature;
     }
 }

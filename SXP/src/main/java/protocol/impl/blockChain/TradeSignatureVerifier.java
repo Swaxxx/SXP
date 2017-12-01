@@ -1,6 +1,10 @@
-package protocol.impl.blockchain;
+package protocol.impl.blockChain;
+
+import java.io.IOException;
 
 import org.web3j.abi.datatypes.Address;
+
+import model.entity.EthereumKey;
 
 public class TradeSignatureVerifier {
 
@@ -11,13 +15,13 @@ public class TradeSignatureVerifier {
     private String clauseA;
     private String clauseB;
 
-	public TradeSignatureVerifier(EthereumContract contract) {
-		this.addr1 = contract.getAddr1().send();
-		this.addr2 = contract.getAddr2().send();
-		this.item1 = contract.getItem1().send();
-		this.item2 = contract.getItem2().send();
-		this.clauseA = contract.getClause1().send();
-		this.clauseB = contract.getClause2().send();
+	public TradeSignatureVerifier(EthereumContract contract) throws IOException, Exception {
+		this.addr1 = contract.getContract().getAddr1().send();
+		this.addr2 = contract.getContract().getAddr2().send();
+		this.item1 = contract.getContract().getItem1().send().toString();
+		this.item2 = contract.getContract().getItem2().send().toString();
+		this.clauseA = contract.getContract().getClause1().send().toString();
+		this.clauseB = contract.getContract().getClause2().send().toString();
 	}
 
 	public Address getAddr1() {
@@ -26,10 +30,6 @@ public class TradeSignatureVerifier {
 
     public Address getAddr2() {
         return addr2;
-    }
-
-    public byte[] getMsgSender() {
-        return msgSender;
     }
 
     public String getItem1() {
@@ -51,9 +51,9 @@ public class TradeSignatureVerifier {
 	public boolean verif(BlockChainContract bcContract) {
 		boolean difference = true;
         int i = 0;
-        while (difference && i < bc.getParties().size()) {
-            EthereumKey key = bc.getParties().get(i);
-            if (ByteUtil.toHexString(ByteUtil.bigIntegerToBytes(key.getPublicKey())).equals(ByteUtil.toHexString(getAddr1()))) {
+        while (difference && i < bcContract.getParties().size()) {
+            EthereumKey key = bcContract.getParties().get(i);
+            if (ByteUtil.bytesToHex(ByteUtil.bigIntegerToBytes(key.getPublicKey())).equals((getAddr1().toString()))) {
                 difference = false;
             }
             i++;
@@ -64,9 +64,9 @@ public class TradeSignatureVerifier {
             difference = true;
         }
 
-        while (difference && i < bc.getParties().size()) {
-            EthereumKey key = bc.getParties().get(i);
-            if (ByteUtil.toHexString(ByteUtil.bigIntegerToBytes(key.getPublicKey())).equals(ByteUtil.toHexString(getAddr2()))) {
+        while (difference && i < bcContract.getParties().size()) {
+            EthereumKey key = bcContract.getParties().get(i);
+            if (ByteUtil.bytesToHex(ByteUtil.bigIntegerToBytes(key.getPublicKey())).equals(getAddr2().toString())) {
                 difference = false;
             }
             i++;
@@ -74,10 +74,10 @@ public class TradeSignatureVerifier {
         if (difference)
             return false;
 
-        if (!bc.getClauses().contains(getClauseA())) {
+        if (!bcContract.getClauses().contains(getClauseA())) {
             return false;
         }
-        if (!bc.getClauses().contains(getClauseB())) {
+        if (!bcContract.getClauses().contains(getClauseB())) {
             return false;
         }
 

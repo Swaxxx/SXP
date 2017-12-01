@@ -4,21 +4,25 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.bouncycastle.pqc.math.linearalgebra.BigIntUtils;
-import org.spongycastle.util.encoders.Hex;
+
+import crypt.api.key.AsymKey;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.math.BigInteger;
 import org.web3j.crypto.Credentials;
 import org.web3j.utils.Numeric;
-import org.web3j.utils.Convert;
 import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Keys;
 
-public class EthereumKey extends ECKey implements AsymKey<BigInteger>, Serializable {
+public class EthereumKey implements AsymKey<BigInteger>, Serializable {
 
-    @NotNull
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3868043368595927601L;
+
+	@NotNull
     @XmlElement(name="privateKey")
     @JsonSerialize(using=controller.tools.BigIntegerSerializer.class)
     @JsonDeserialize(using=controller.tools.BigIntegerDeserializer.class)
@@ -40,6 +44,10 @@ public class EthereumKey extends ECKey implements AsymKey<BigInteger>, Serializa
     @NotNull
     @XmlElement(name="credentials")
     private Credentials credentials;
+    
+    public EthereumKey() {
+    	
+    }
     
     public EthereumKey(BigInteger privateKey, BigInteger publicKey) {
         this.privateKey = privateKey;

@@ -130,7 +130,6 @@ tasks.withType(Test) {
 }
 
 dependencies {
-	
 	compile 'org.hibernate:hibernate-validator:5.2.4.Final'
 	
 	compile 'org.apache.logging.log4j:log4j-api:2.1'
@@ -172,6 +171,7 @@ dependencies {
 	compile 'javax.el:javax.el-api:2.2.4'
 	compile 'org.glassfish.web:javax.el:2.2.4'
 	
+	compile 'org.web3j:core:3.1.1'
 	
 	testCompile 'org.apache.commons:commons-lang3:3.1'
 	testCompile fileTree(dir: './libs', include: 'loremipsum-1.0.jar')
