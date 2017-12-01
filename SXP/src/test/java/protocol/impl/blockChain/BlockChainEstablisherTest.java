@@ -59,12 +59,36 @@ public class BlockChainEstablisherTest {
         //Add Ethereum Account
         //EthereumKey keys0 = EthereumKeyFactory.createFromHex("287fc6941394e06872850966e20fe190ad43b3d0a3caa82e42cd077a6aaeb8b5", "0f3bCE1d0d5bf08310Ca3965260b6D0AE3E5b06F");
         //EthereumKey keys1 = EthereumKeyFactory.createFromHex("c41bfd554363e4c8bf221dc1a1353d858c279a4cd460ec4e2f3f40866a2e416f", "e64CF76ECF2c4fCfDf5578ABD069eBece054465C");
-        EthereumKey keys0 = EthereumKeyFactory.createFromKeystore(
+        /*EthereumKey keys0 = EthereumKeyFactory.createFromKeystore(
         		"/home/swa/.ethereum/devnet/keystore/UTC--2017-11-29T02-40-12.552996941Z--0862943ea786e41fb1ae02cf7f93591d388eedc4",
         		"");
         EthereumKey keys1 = EthereumKeyFactory.createFromKeystore(
         		"/home/swa/.ethereum/devnet/keystore/UTC--2017-11-29T02-41-42.424429893Z--0245f1e7c45698e3c7961eed302b80ec69d066ed",
-        		"test");
+        		"test");*/
+        /*EthereumKey keys0 = EthereumKeyFactory.createFromKeystore(
+        		"C:\\Users\\cha\\AppData\\Roaming\\Ethereum\\devnet\\keystore\\UTC--2017-11-29T06-32-47.458216900Z--e3555423064d46624b86204a1810dbf8b22fba40",
+        		"");
+        */
+        /*EthereumKey keys0 = EthereumKeyFactory.createFromKeystore(
+        		"C:\\Users\\cha\\AppData\\Roaming\\Ethereum\\devnet\\keystore\\UTC--2017-11-29T06-32-47.458216900Z--e3555423064d46624b86204a1810dbf8b22fba40",
+        		"lsfpzjfdoidsjfoisdjf");
+        EthereumKey keys1 = EthereumKeyFactory.createFromKeystore(
+        		"C:\\Users\\cha\\AppData\\Roaming\\Ethereum\\devnet\\keystore\\UTC--2017-11-29T06-33-33.152800100Z--01b2bb58a6478a2c90fab8c32621543c9de5ab61",
+        		"test");*/
+        EthereumKey keys0 = EthereumKeyFactory.createNew();
+        EthereumKey keys1 = EthereumKeyFactory.createNew();
+        
+        System.out.println(keys0.getAddress());
+        System.out.println(keys0.getStringPublicKey());
+        System.out.println(keys0.getStringPrivateKey());
+        
+        System.out.println();
+        
+        System.out.println(keys1.getAddress());
+        System.out.println(keys1.getStringPublicKey());
+        System.out.println(keys1.getStringPrivateKey());
+        
+        System.exit(0);
 
         // Creating the users
         User[] users = new User[N];
