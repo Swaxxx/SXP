@@ -161,6 +161,7 @@ dependencies {
         {
                 // org.jboss.netty has moved to io.netty
 		exclude group: 'org.jboss.netty', module: 'httptunnel'
+		exclude group: 'org.bouncycastle'
 	}
 	compile 'org.jdom:jdom2:2.0.6'
 	compile 'com.google.guava:guava:19.0'
@@ -171,7 +172,23 @@ dependencies {
 	compile 'javax.el:javax.el-api:2.2.4'
 	compile 'org.glassfish.web:javax.el:2.2.4'
 	
+	/*compile('org.web3j:core:3.1.1') {
+        compile ('org.bouncycastle:bcprov-jdk15on:[1.5,)') {
+        	transitive = false;
+        }
+    }*/
+    
+    /*compile 'org.web3j:core:3.1.1'
+	compile ('org.bouncycastle:bcprov-jdk15on:[1.5,)') {
+    	transitive = false;
+    }*/
+    
+    /*compile('org.web3j:core:3.1.1') {
+		exclude group: 'org.bouncycastle'
+	}*/
+	
 	compile 'org.web3j:core:3.1.1'
+	compile 'org.bouncycastle:bcprov-jdk15on:[1.5,)'
 	
 	testCompile 'org.apache.commons:commons-lang3:3.1'
 	testCompile fileTree(dir: './libs', include: 'loremipsum-1.0.jar')
