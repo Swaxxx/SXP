@@ -5,6 +5,8 @@ RemoteSystemsTempFiles/*
 .classpath
 .settings
 
+DemoWeb3j3_1/target
+
 SXP/bin/
 SXP/users.data/
 SXP/.gradle/
