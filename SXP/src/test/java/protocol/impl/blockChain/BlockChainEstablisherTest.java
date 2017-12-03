@@ -28,7 +28,7 @@ public class BlockChainEstablisherTest {
 
     public static final int N = 2;
 
-    private ContractEntity[] contractEntity = new ContractEntity[N] ;
+    private ContractEntity[] contractEntity = new ContractEntity[N];
     private BlockChainContract bcContractA, bcContractB;
 
     @SuppressWarnings("unused")
@@ -41,7 +41,7 @@ public class BlockChainEstablisherTest {
     }
 
     @AfterClass
-    static public void deleteBaseAndPeer(){
+    static public void deleteBaseAndPeer() {
         TestUtils.removeRecursively(new File(".db-" + restPort + "/"));
         TestUtils.removePeerCache();
         application.stop();
@@ -68,8 +68,8 @@ public class BlockChainEstablisherTest {
 
         // Creating the users
         User[] users = new User[N];
-        ArrayList<String> parties = new ArrayList<>() ;
-        for (int i=0; i<N; i++) {
+        ArrayList<String> parties = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
             String login  = TestInputGenerator.getRandomAlphaWord(20);
             String password = TestInputGenerator.getRandomPwd(20);
 
@@ -80,24 +80,26 @@ public class BlockChainEstablisherTest {
             hasher.setSalt(users[i].getSalt());
             users[i].setPasswordHash(hasher.getHash(password.getBytes()));
             users[i].setCreatedAt(new Date());
-            //Attribute EthKeys
-            if (i==0)
+
+            //Attribute EthereumKey
+            if (i == 0) {
                 users[i].setEthereumKey(keys0);
-            else
+            } else {
                 users[i].setEthereumKey(keys1);
+            }
 
             SyncManager<User> em = new UserSyncManagerImpl();
             em.begin();
             em.persist(users[i]);
             em.end();
 
-            parties.add(users[i].getId()) ;
+            parties.add(users[i].getId());
         }
 
         ///////////////////////////////
         //Add Entities in Contracts Entity
-        for (int i=0 ; i<N ; i++){
-            contractEntity[i] = new ContractEntity() ;
+        for (int i = 0; i < N; i++) {
+            contractEntity[i] = new ContractEntity();
             contractEntity[i].setParties(parties);
             System.out.println("USERS : " + contractEntity[i].getParties().toString());
 
@@ -111,18 +113,16 @@ public class BlockChainEstablisherTest {
         //End Add Entities
         ///////////////////////////////
 
-
         ArrayList<EthereumKey> partis = new ArrayList<>();
         partis.add(users[0].getEthereumKey());
         partis.add(users[1].getEthereumKey());
 
-
         // Map of URIS
-        HashMap<EthereumKey, String> uris = new HashMap<>() ;
+        HashMap<EthereumKey, String> uris = new HashMap<>();
         String uri = Application.getInstance().getPeer().getUri();
-        for (int k=0; k<N; k++){
-            EthereumKey key = new EthereumKey() ;
-            key.setPublicKey(users[k].getEthereumKey().getPublicKey()) ;
+        for (int k = 0; k < N; k++) {
+            EthereumKey key = new EthereumKey();
+            key.setPublicKey(users[k].getEthereumKey().getPublicKey());
             uris.put(key, uri);
         }
 
@@ -141,34 +141,36 @@ public class BlockChainEstablisherTest {
 
         sleep(2000);
 
-        bcEstablisherA.start() ;
+        bcEstablisherA.start();
 
         //Time to sendContractAddr and set it
         sleep(2000);
 
-        bcEstablisherA.sign(bcContractB) ;
+        bcEstablisherA.sign(bcContractB);
 
         sleep(30000);
 
-        bcEstablisherB.sign(bcContractA) ;
+        bcEstablisherB.sign(bcContractA);
 
         //time to EstablisherA check if finalized when EstablisherB share Tx Signature
         sleep(300000);
 
         System.out.println("\n\n[Entity<A> Final State] :");
-        for (String sign : contractEntity[0].getSignatures().keySet())
-            System.out.println("\t" + sign) ;
+        for (String sign : contractEntity[0].getSignatures().keySet()) {
+            System.out.println("\t" + sign);
+        }
 
         System.out.println("\n\n[Entity<B> Final State] :");
-        for (String sign : contractEntity[1].getSignatures().keySet())
-            System.out.println("\t" + sign) ;
+        for (String sign : contractEntity[1].getSignatures().keySet()) {
+            System.out.println("\t" + sign);
+        }
 
     }
 
     public void sleep(int i) {
-        try{
+        try {
             Thread.sleep(i);
-        }catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
