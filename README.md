@@ -18,6 +18,7 @@ This work was realized in the context of the teaching unit Software Engineering,
 
 ## Contacts
 
+Feel free to contact us if you have any question :
 * Charly LAMOTHE : charly.lamothe@etu.univ-amu.fr
 * Doulkifouli ABDALLAH-ALI : doulkifouli.abdallah-ali@etu.univ-amu.fr
 
