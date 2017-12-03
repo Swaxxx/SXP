@@ -16,9 +16,10 @@ Jalal RABAHI
 Trang NGUYEN NGOC BAO
 Charly LAMOTHE
 
-## Contacts
+## Contacts
 
 Charly LAMOTHE [here](charly.lamothe@etu.univ-amu.fr)
+
 Doulkifouli ABDALLAH-ALI [here](doulkifouli.abdallah-ali@etu.univ-amu.fr)
 
 ***
