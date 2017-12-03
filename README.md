@@ -9,6 +9,18 @@ See : [Wiki](https://github.com/Swaxxx/SXP/wiki/Home)
 
 This work was realized in the context of the teaching unit Software Engineering, in Computer Science M1 at Aix-Marseille Université.
 
+## Authors
+
+Doulkifouli ABDALLAH-ALI
+Jalal RABAHI
+Trang NGUYEN NGOC BAO
+Charly LAMOTHE
+
+## Contacts
+
+Charly LAMOTHE [here](charly.lamothe@etu.univ-amu.fr)
+Doulkifouli ABDALLAH-ALI [here](doulkifouli.abdallah-ali@etu.univ-amu.fr)
+
 ***
 
 # Secure Exchange Protocols (SXP)
