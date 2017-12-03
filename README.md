@@ -18,8 +18,8 @@ This work was realized in the context of the teaching unit Software Engineering,
 
 ## Contacts
 
-* Charly LAMOTHE [here](charly.lamothe@etu.univ-amu.fr)
-* Doulkifouli ABDALLAH-ALI [here](doulkifouli.abdallah-ali@etu.univ-amu.fr)
+* Charly LAMOTHE : charly.lamothe@etu.univ-amu.fr
+* Doulkifouli ABDALLAH-ALI : doulkifouli.abdallah-ali@etu.univ-amu.fr
 
 ***
 
