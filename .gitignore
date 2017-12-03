@@ -27,3 +27,4 @@ SXP/keystore.jks
 SXP/.cache*
 SXP/derby.log
 SXP/..gitignore.swp
+/.gradle/

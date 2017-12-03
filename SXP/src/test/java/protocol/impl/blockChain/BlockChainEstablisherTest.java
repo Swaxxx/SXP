@@ -9,6 +9,7 @@ import model.entity.ContractEntity;
 import model.entity.EthereumKey;
 import model.entity.User;
 import model.syncManager.UserSyncManagerImpl;
+
 import org.junit.AfterClass;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class BlockChainEstablisherTest {
 
     public static final int N = 2;
 
-    private ContractEntity[] contractEntity = new ContractEntity[N] ;
+    private ContractEntity[] contractEntity = new ContractEntity[N];
     private BlockChainContract bcContractA, bcContractB;
 
     @SuppressWarnings("unused")
@@ -50,33 +51,21 @@ public class BlockChainEstablisherTest {
 
     @Test
     public void Test() throws Exception {
-
+    	
         if (Application.getInstance() == null) {
             application = new Application();
             Application.getInstance().runForTests(restPort);
         }
 
         //Add Ethereum Account
-        //EthereumKey keys0 = EthereumKeyFactory.createFromHex("287fc6941394e06872850966e20fe190ad43b3d0a3caa82e42cd077a6aaeb8b5", "0f3bCE1d0d5bf08310Ca3965260b6D0AE3E5b06F");
-        //EthereumKey keys1 = EthereumKeyFactory.createFromHex("c41bfd554363e4c8bf221dc1a1353d858c279a4cd460ec4e2f3f40866a2e416f", "e64CF76ECF2c4fCfDf5578ABD069eBece054465C");
-        /*EthereumKey keys0 = EthereumKeyFactory.createFromKeystore(
-        		"/home/swa/.ethereum/devnet/keystore/UTC--2017-11-29T02-40-12.552996941Z--0862943ea786e41fb1ae02cf7f93591d388eedc4",
-        		"");
-        EthereumKey keys1 = EthereumKeyFactory.createFromKeystore(
-        		"/home/swa/.ethereum/devnet/keystore/UTC--2017-11-29T02-41-42.424429893Z--0245f1e7c45698e3c7961eed302b80ec69d066ed",
-        		"test");*/
-        /*EthereumKey keys0 = EthereumKeyFactory.createFromKeystore(
+        EthereumKey keys0 = EthereumKeyFactory.createFromKeystore(
         		"C:\\Users\\cha\\AppData\\Roaming\\Ethereum\\devnet\\keystore\\UTC--2017-11-29T06-32-47.458216900Z--e3555423064d46624b86204a1810dbf8b22fba40",
         		"");
-        */
-        /*EthereumKey keys0 = EthereumKeyFactory.createFromKeystore(
-        		"C:\\Users\\cha\\AppData\\Roaming\\Ethereum\\devnet\\keystore\\UTC--2017-11-29T06-32-47.458216900Z--e3555423064d46624b86204a1810dbf8b22fba40",
-        		"lsfpzjfdoidsjfoisdjf");
         EthereumKey keys1 = EthereumKeyFactory.createFromKeystore(
         		"C:\\Users\\cha\\AppData\\Roaming\\Ethereum\\devnet\\keystore\\UTC--2017-11-29T06-33-33.152800100Z--01b2bb58a6478a2c90fab8c32621543c9de5ab61",
-        		"test");*/
-        EthereumKey keys0 = EthereumKeyFactory.createNew();
-        EthereumKey keys1 = EthereumKeyFactory.createNew();
+        		"test");
+        /*EthereumKey keys0 = EthereumKeyFactory.createNew();
+        EthereumKey keys1 = EthereumKeyFactory.createNew();*/
         
         System.out.println(keys0.getAddress());
         System.out.println(keys0.getStringPublicKey());
@@ -87,12 +76,10 @@ public class BlockChainEstablisherTest {
         System.out.println(keys1.getAddress());
         System.out.println(keys1.getStringPublicKey());
         System.out.println(keys1.getStringPrivateKey());
-        
-        System.exit(0);
 
         // Creating the users
         User[] users = new User[N];
-        ArrayList<String> parties = new ArrayList<>() ;
+        ArrayList<String> parties = new ArrayList<>();
         for (int i=0; i<N; i++) {
             String login  = TestInputGenerator.getRandomAlphaWord(20);
             String password = TestInputGenerator.getRandomPwd(20);
@@ -115,13 +102,13 @@ public class BlockChainEstablisherTest {
             em.persist(users[i]);
             em.end();
 
-            parties.add(users[i].getId()) ;
+            parties.add(users[i].getId());
         }
 
         ///////////////////////////////
         //Add Entities in Contracts Entity
-        for (int i=0 ; i<N ; i++){
-            contractEntity[i] = new ContractEntity() ;
+        for (int i=0; i<N; i++){
+            contractEntity[i] = new ContractEntity();
             contractEntity[i].setParties(parties);
             System.out.println("USERS : " + contractEntity[i].getParties().toString());
 
@@ -142,11 +129,11 @@ public class BlockChainEstablisherTest {
 
 
         // Map of URIS
-        HashMap<EthereumKey, String> uris = new HashMap<>() ;
+        HashMap<EthereumKey, String> uris = new HashMap<>();
         String uri = Application.getInstance().getPeer().getUri();
         for (int k=0; k<N; k++){
-            EthereumKey key = new EthereumKey() ;
-            key.setPublicKey(users[k].getEthereumKey().getPublicKey()) ;
+            EthereumKey key = new EthereumKey();
+            key.setPublicKey(users[k].getEthereumKey().getPublicKey());
             uris.put(key, uri);
         }
 
@@ -165,27 +152,27 @@ public class BlockChainEstablisherTest {
 
         sleep(2000);
 
-        bcEstablisherA.start() ;
+        bcEstablisherA.start();
 
         //Time to sendContractAddr and set it
         sleep(2000);
 
-        bcEstablisherA.sign(bcContractB) ;
+        bcEstablisherA.sign(bcContractB);
 
         sleep(30000);
 
-        bcEstablisherB.sign(bcContractA) ;
+        bcEstablisherB.sign(bcContractA);
 
         //time to EstablisherA check if finalized when EstablisherB share Tx Signature
         sleep(300000);
 
         System.out.println("\n\n[Entity<A> Final State] :");
         for (String sign : contractEntity[0].getSignatures().keySet())
-            System.out.println("\t" + sign) ;
+            System.out.println("\t" + sign);
 
         System.out.println("\n\n[Entity<B> Final State] :");
         for (String sign : contractEntity[1].getSignatures().keySet())
-            System.out.println("\t" + sign) ;
+            System.out.println("\t" + sign);
 
     }
 
