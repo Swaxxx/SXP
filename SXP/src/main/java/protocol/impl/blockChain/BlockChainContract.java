@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
-public class BlockChainContract extends EstablisherContract<BigInteger, EthereumKey, EthereumSignature, EthereumSigner>{
+public class BlockChainContract extends EstablisherContract<BigInteger, EthereumKey, EthereumSignature, EthereumSigner> {
     
 	private String id;
     private Date date;
@@ -39,7 +39,7 @@ public class BlockChainContract extends EstablisherContract<BigInteger, Ethereum
     protected EthereumSigner signer;
    
     // Basic constructor
-    public BlockChainContract(){
+    public BlockChainContract() {
         super();
         this.contract = new ContractEntity();
         date = contract.getCreatedAt();
@@ -52,7 +52,7 @@ public class BlockChainContract extends EstablisherContract<BigInteger, Ethereum
     }
     
     // Constructor from a ContractEntity (what will be most used)
-    public BlockChainContract(ContractEntity c){
+    public BlockChainContract(ContractEntity c) {
         super();
         this.contract = c;
         this.setClauses(contract.getClauses());
@@ -63,7 +63,7 @@ public class BlockChainContract extends EstablisherContract<BigInteger, Ethereum
         contract.setTitle(id);
     }
     
-    public BlockChainContract(ContractEntity c, ArrayList<EthereumKey> parties){
+    public BlockChainContract(ContractEntity c, ArrayList<EthereumKey> parties) {
         super();
         this.contract = c;
         this.setClauses(contract.getClauses());
@@ -76,11 +76,11 @@ public class BlockChainContract extends EstablisherContract<BigInteger, Ethereum
     }
 
     /************* GETTERS ***********/
-    public ArrayList<String> getClauses(){
+    public ArrayList<String> getClauses() {
         return clauses;
     }
     
-    public ArrayList<EthereumKey> getParties(){
+    public ArrayList<EthereumKey> getParties() {
         return parties;
     }
     
@@ -93,7 +93,7 @@ public class BlockChainContract extends EstablisherContract<BigInteger, Ethereum
     }
     
     /************* SETTERS ***********/
-    public void setClauses(ArrayList<String> c){
+    public void setClauses(ArrayList<String> c) {
         this.clauses = c;
         this.contract.setClauses(c);
     }
@@ -102,9 +102,9 @@ public class BlockChainContract extends EstablisherContract<BigInteger, Ethereum
      * Find the parties keys
      * @param s : List of user ids
      */
-    public void setParties(ArrayList<String> s){
-        for (String u : s){
-            JsonTools<User> json = new JsonTools<>(new TypeReference<User>(){});
+    public void setParties(ArrayList<String> s) {
+        for (String u : s) {
+            JsonTools<User> json = new JsonTools<>(new TypeReference<User>() {});
             Users users = new Users();
             User user = json.toEntity(users.get(u));
             this.parties.add(user.getEthereumKey());
@@ -113,23 +113,23 @@ public class BlockChainContract extends EstablisherContract<BigInteger, Ethereum
         this.contract.setParties(s);
         
         // Order parties by publicKey (useful to get hashable data
-        this.parties.sort(new Comparator<EthereumKey>(){
+        this.parties.sort(new Comparator<EthereumKey>() {
             @Override
-            public int compare(EthereumKey k1, EthereumKey k2){
+            public int compare(EthereumKey k1, EthereumKey k2) {
                 return k1.getPublicKey().compareTo(k2.getPublicKey());
             }
         });
     }
     
     public void setPartiesAsKeys(ArrayList<EthereumKey> s) {
-    	parties.addAll(s) ;
-        int i=0 ;
+    	parties.addAll(s);
+        int i = 0;
         for(EthereumKey tmp : s) {
-        	partiesId.put(tmp, contract.getParties().get(i)) ;
-            i++ ;
+        	partiesId.put(tmp, contract.getParties().get(i));
+            i++;
         }
-        setClauses(contract.getClauses()) ;
-        id = getHashableData().toString() ;
+        setClauses(contract.getClauses());
+        id = getHashableData().toString();
     }
     
     public void setSigner(EthereumSigner ethereumSigner) {
@@ -139,20 +139,20 @@ public class BlockChainContract extends EstablisherContract<BigInteger, Ethereum
     
     /************* STATUS / WISH ***********/
     @Override
-    public Status getStatus(){
+    public Status getStatus() {
         return contract.getStatus();
     }
     @Override
-    public void setStatus(Status s){
+    public void setStatus(Status s) {
         contract.setStatus(s);
     }
     
     @Override
-    public Wish getWish(){
+    public Wish getWish() {
         return contract.getWish();
     }
     @Override
-    public void setWish(Wish w){
+    public void setWish(Wish w) {
         contract.setWish(w);
     }
     
@@ -209,20 +209,22 @@ public class BlockChainContract extends EstablisherContract<BigInteger, Ethereum
     
     @Override
     public boolean equals(EstablisherContract<BigInteger, EthereumKey, EthereumSignature, EthereumSigner> c) {
-        if (!(c instanceof BlockChainContract))
+        if (!(c instanceof BlockChainContract)) {
             return false;
+        }
         BlockChainContract contract = (BlockChainContract) c;
-        if (contract.clauses == null)
+        if (contract.clauses == null) {
             return false;
+        }
         return Arrays.areEqual(this.getHashableData(), contract.getHashableData());
     }
     
     @Override
     public byte[] getHashableData() {
-    	String hashParties = parties.toString() ;
-        String hashClauses = clauses.toString() ;
-        String concat = hashParties + hashClauses + date.toString() ;
-        return new SHA256Hasher().getHash(concat.getBytes()) ;
+    	String hashParties = parties.toString();
+        String hashClauses = clauses.toString();
+        String concat = hashParties + hashClauses + date.toString();
+        return new SHA256Hasher().getHash(concat.getBytes());
     }
     
     @Override

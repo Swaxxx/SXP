@@ -9,6 +9,9 @@ import org.web3j.protocol.core.methods.response.EthAccounts;
 
 public class EthereumAccountUtils {
 
+	/**
+	 * Ensure that the funds of Ether to deploy the smart contract is enough.
+	 */
 	public static void ensureFunds(Web3j web3j, String address, BigInteger amountWei) throws Exception {
 		BigInteger balance = EthereumCurrencyUtils.getBalanceWei(web3j, address);
 		
